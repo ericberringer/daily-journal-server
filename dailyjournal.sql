@@ -15,6 +15,12 @@ CREATE TABLE `Moods` (
 
 
 INSERT INTO `Journal_Entries` VALUES (null, '01/10/2021', 'death', 'journal1', 1);
+INSERT INTO `Journal_Entries` VALUES (null, '01/12/2021', 'milk', 'journal2', 2);
+INSERT INTO `Journal_Entries` VALUES (null, '01/14/2021', 'meat', 'journal3', 3);
+INSERT INTO `Journal_Entries` VALUES (null, '01/16/2021', 'feelings', 'journal4', 4);
 
-INSERT INTO `Moods` VALUES (null, 'Elated')
+INSERT INTO `Moods` VALUES (null, 'Sad');
+INSERT INTO `Moods` VALUES (null, 'Elated');
+INSERT INTO `Moods` VALUES (null, 'Excited');
+INSERT INTO `Moods` VALUES (null, 'Contemplative');
 

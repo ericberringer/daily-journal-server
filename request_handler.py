@@ -1,6 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from moods import get_single_mood, get_all_moods
-from entries import get_all_entries, get_single_entry
+from moods import get_single_mood, get_all_moods, delete_mood
+from entries import get_all_entries, get_single_entry, delete_entry
 
 
 # Here's a class. It inherits from another class.
@@ -82,16 +82,6 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_single_mood(id)}"
                 else:
                     response = f"{get_all_moods()}"
-        #     elif resource == "employees":
-        #         if id is not None:
-        #             response = f"{get_single_employee(id)}"
-        #         else:
-        #             response = f"{get_all_employees()}"
-        #     elif resource == "locations":
-        #         if id is not None:
-        #             response = f"{get_single_location(id)}"
-        #         else:
-        #             response = f"{get_all_locations()}"
 
         # # Response from parse_url() is a tuple with 3
         # # items in it, which means the request was for
@@ -104,15 +94,6 @@ class HandleRequests(BaseHTTPRequestHandler):
         #     # email as a filtering value?
         #     if key == "email" and resource == "customers":
         #         response = f"{get_customers_by_email(value)}"
-
-        #     if key == "location_id" and resource == "employees":
-        #         response = f"{get_employees_by_location(value)}"
-            
-        #     if key == "location_id" and resource == "animals":
-        #         response = f"{get_animals_by_location(value)}"
-            
-        #     if key == "status" and resource == "animals":
-        #         response = f"{get_animals_by_status(value)}"
 
         # encode is expecting a string, we put the responses in f strings if they are not
         # coming back as a string
@@ -130,11 +111,24 @@ class HandleRequests(BaseHTTPRequestHandler):
         self.wfile.write(response.encode())
 
 
-    # Here's a method on the class that overrides the parent's method.
-    # It handles any PUT request.
-    def do_PUT(self):
-        self.do_POST()
+    def do_DELETE(self):
+        # Set a 204 response code
+        self._set_headers(204)
 
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
+
+        # Delete a single entry from the list
+        if resource == "entries":
+            delete_entry(id)
+            # Encode the new entry and send in response
+
+        # if resource == "customers":
+        #     delete_customer(id)
+        #     # Encode the new customer and send in response
+        #     self.wfile.write("".encode())
+
+        self.wfile.write("".encode())
 
 # This function is not inside the class. It is the starting
 # point of this application.

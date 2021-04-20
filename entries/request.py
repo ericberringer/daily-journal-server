@@ -1,6 +1,7 @@
 import sqlite3
 import json
 from models import Journal_Entry
+from models import Mood
 
 def get_all_entries():
     # Open a connection to the database
@@ -17,8 +18,11 @@ def get_all_entries():
             e.date,
             e.topic,
             e.journal_entry,
-            e.mood_id
+            e.mood_id,
+            m.mood
         FROM Journal_Entry e
+        JOIN Mood m
+            ON m.id = e.mood_id
         """)
 
         # Initialize an empty list to hold all journal_entry representations
@@ -36,6 +40,9 @@ def get_all_entries():
             # Journal_Entry class above.
             entry = Journal_Entry(row['id'], row['date'], row['topic'],
                             row['journal_entry'], row['mood_id'])
+
+            mood = Mood(row['mood_id'], row['mood'])
+            entry.mood = mood.__dict__
 
             entries.append(entry.__dict__)
 
@@ -55,8 +62,11 @@ def get_single_entry(id):
             e.date,
             e.topic,
             e.journal_entry,
-            e.mood_id
+            e.mood_id,
+            m.mood
         FROM Journal_Entry e
+        JOIN Mood m
+            ON m.id = e.mood_id
         WHERE e.id = ?
         """, ( id, ))
 
@@ -68,6 +78,9 @@ def get_single_entry(id):
         # sets up init and passes in all the paramaters
         entry = Journal_Entry(data['id'], data['date'], data['topic'],
                             data['journal_entry'], data['mood_id'])
+
+        mood = Mood(data['id'], data['mood'] )
+        entry.mood = mood.__dict__
 
         return json.dumps(entry.__dict__)
 
@@ -130,7 +143,7 @@ def get_entry_by_search(search):
 
             entry = Journal_Entry(data['id'], data['date'], data['topic'],
                             data['journal_entry'], data['mood_id'])
-                            
+
             entries.append(entry.__dict__)
 
         return json.dumps(entries)

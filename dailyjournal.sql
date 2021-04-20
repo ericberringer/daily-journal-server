@@ -18,11 +18,13 @@ INSERT INTO `Journal_Entry` VALUES (null, '01/10/2021', 'death', 'journal1', 1);
 INSERT INTO `Journal_Entry` VALUES (null, '01/12/2021', 'milk', 'journal2', 2);
 INSERT INTO `Journal_Entry` VALUES (null, '01/14/2021', 'meat', 'journal3', 3);
 INSERT INTO `Journal_Entry` VALUES (null, '01/16/2021', 'feelings', 'journal4', 4);
+INSERT INTO `Journal_Entry` VALUES (null, '01/30/2024', 'feet', 'journal5', 2);
 
 INSERT INTO `Mood` VALUES (null, 'Sad');
 INSERT INTO `Mood` VALUES (null, 'Elated');
 INSERT INTO `Mood` VALUES (null, 'Excited');
 INSERT INTO `Mood` VALUES (null, 'Contemplative');
+
 
 
 SELECT
@@ -33,3 +35,14 @@ SELECT
 	e.mood_id
 FROM Journal_Entry e
 WHERE e.id = 4
+
+SELECT * FROM Journal_Entry
+
+SELECT
+            e.id,
+            e.date,
+            e.topic,
+            e.journal_entry,
+            e.mood_id
+        FROM Journal_Entry e
+        WHERE e.journal_entry LIKE 'journal1'

@@ -32,4 +32,4 @@ SELECT
 	e.journal_entry,
 	e.mood_id
 FROM Journal_Entry e
-WHERE e.id = 3
+WHERE e.id = 4

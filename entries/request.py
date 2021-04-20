@@ -71,6 +71,70 @@ def get_single_entry(id):
 
         return json.dumps(entry.__dict__)
 
+def create_entry(new_entry):
+    with sqlite3.connect("./kennel.db") as conn:
+        db_cursor = conn.cursor()
+
+        # SQL query
+        # Insert the new entry into the database, this will match my python db
+        # new_entry[] section needs to match the object in React i.e. python server has mood_id
+        # and react has mood_id written as moodId
+        db_cursor.execute("""
+        INSERT INTO Entry
+            ( date, topic, journal_entry, mood_id )
+        VALUES
+            ( ?, ?, ?, ?);
+        """, (new_entry['date'], new_entry['concept'],
+              new_entry['entry'], new_entry['moodId'], ))
+
+        # The `lastrowid` property on the cursor will return
+        # the primary key of the last thing that got added to
+        # the database.
+        id = db_cursor.lastrowid
+
+        # Add the `id` property to the entry dictionary that
+        # was sent by the client so that the client sees the
+        # primary key in the response.
+        new_entry['id'] = id
+
+
+    return json.dumps(new_entry)
+
+def get_entry_by_search(search):
+    with sqlite3.connect("./dailyjournal.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Use a ? parameter to inject a variable's value
+        # into the SQL statement.
+        db_cursor.execute("""
+        SELECT
+            e.id,
+            e.date,
+            e.topic,
+            e.journal_entry,
+            e.mood_id
+        FROM Journal_Entry e
+        WHERE e.journal_entry LIKE ?
+        """, ( search, ))
+
+
+        entries = []
+        # Load the single result into memory
+        # we define data and that is why we pass data in our entry = Entry section below
+        dataset = db_cursor.fetchall()
+
+        # Create an entry instance from the current row
+        # sets up init and passes in all the paramaters
+        for data in dataset:
+
+            entry = Journal_Entry(data['id'], data['date'], data['topic'],
+                            data['journal_entry'], data['mood_id'])
+                            
+            entries.append(entry.__dict__)
+
+        return json.dumps(entries)
+
 def delete_entry(id):
     with sqlite3.connect("./dailyjournal.db") as conn:
         db_cursor = conn.cursor()

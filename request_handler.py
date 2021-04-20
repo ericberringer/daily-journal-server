@@ -1,6 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from moods import get_single_mood, get_all_moods, delete_mood
-from entries import get_all_entries, get_single_entry, delete_entry
+from entries import get_all_entries, get_single_entry, delete_entry, get_entry_by_search
 
 
 # Here's a class. It inherits from another class.
@@ -66,7 +66,7 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         # Response from parse_url() is a tuple with 2
         # items in it, which means the request was for
-        # `/animals` or `/animals/2`
+        # `/entries` or `/entries/2`
         # You should be able to identify a Python if block.
         # len is like .length in javascript
         if len(parsed) == 2:
@@ -86,14 +86,14 @@ class HandleRequests(BaseHTTPRequestHandler):
         # # Response from parse_url() is a tuple with 3
         # # items in it, which means the request was for
         # # `/resource?parameter=value`
-        # elif len(parsed) == 3:
-        #     ( resource, key, value ) = parsed
+        elif len(parsed) == 3:
+            ( resource, key, value ) = parsed
 
         #     # Is the resource `customers` and was there a
         #     # query parameter that specified the customer
         #     # email as a filtering value?
-        #     if key == "email" and resource == "customers":
-        #         response = f"{get_customers_by_email(value)}"
+            if key == "q" and resource == "entries":
+                response = f"{get_entry_by_search(value)}"
 
         # encode is expecting a string, we put the responses in f strings if they are not
         # coming back as a string

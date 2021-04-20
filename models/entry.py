@@ -1,4 +1,4 @@
-class Entry():
+class Journal_Entry():
 
     # Class initializer. It has 5 custom parameters, with the
     # special `self` parameter that every method on a class

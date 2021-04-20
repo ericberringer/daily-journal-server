@@ -1,6 +1,6 @@
 import sqlite3
 import json
-from models import Entry
+from models import Journal_Entry
 
 def get_all_entries():
     # Open a connection to the database
@@ -18,11 +18,11 @@ def get_all_entries():
             e.topic,
             e.journal_entry,
             e.mood_id
-        FROM Entry e
+        FROM Journal_Entry e
         """)
 
         # Initialize an empty list to hold all journal_entry representations
-        entry = []
+        entries = []
 
         # Convert rows of data into a Python list
         dataset = db_cursor.fetchall()
@@ -34,10 +34,39 @@ def get_all_entries():
             # Note that the database fields are specified in
             # exact order of the parameters defined in the
             # Journal_Entry class above.
-            animal = Entry(row['id'], row['date'], row['topic'],
+            entry = Journal_Entry(row['id'], row['date'], row['topic'],
                             row['journal_entry'], row['mood_id'])
 
             entries.append(entry.__dict__)
 
     # Use `json` package to properly serialize list as JSON
-    return json.dumps(entry)
+    return json.dumps(entries)
+
+def get_single_entry(id):
+    with sqlite3.connect("./dailyjournal.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Use a ? parameter to inject a variable's value
+        # into the SQL statement.
+        db_cursor.execute("""
+        SELECT
+            e.id,
+            e.date,
+            e.topic,
+            e.journal_entry,
+            e.mood_id
+        FROM Journal_Entry e
+        WHERE e.id = ?
+        """, ( id, ))
+
+        # Load the single result into memory
+        # we define data and that is why we pass data in our entry = Entry section below
+        data = db_cursor.fetchone()
+
+        # Create an entry instance from the current row
+        # sets up init and passes in all the paramaters
+        entry = Journal_Entry(data['id'], data['date'], data['topic'],
+                            data['journal_entry'], data['mood_id'])
+
+        return json.dumps(entry.__dict__)

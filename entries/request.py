@@ -85,20 +85,20 @@ def get_single_entry(id):
         return json.dumps(entry.__dict__)
 
 def create_entry(new_entry):
-    with sqlite3.connect("./kennel.db") as conn:
+    with sqlite3.connect("./dailyjournal.db") as conn:
         db_cursor = conn.cursor()
 
         # SQL query
         # Insert the new entry into the database, this will match my python db
         # new_entry[] section needs to match the object in React i.e. python server has mood_id
-        # and react has mood_id written as moodId
+        # and react has mood_id written as moodId, although I have changed react to mood_id.
         db_cursor.execute("""
-        INSERT INTO Entry
+        INSERT INTO Journal_Entry
             ( date, topic, journal_entry, mood_id )
         VALUES
             ( ?, ?, ?, ?);
-        """, (new_entry['date'], new_entry['concept'],
-              new_entry['entry'], new_entry['moodId'], ))
+        """, (new_entry['date'], new_entry['topic'],
+              new_entry['entry'], new_entry['mood_id'], ))
 
         # The `lastrowid` property on the cursor will return
         # the primary key of the last thing that got added to

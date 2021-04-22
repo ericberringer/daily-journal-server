@@ -13,6 +13,16 @@ CREATE TABLE `Mood` (
 	`mood`	TEXT NOT NULL
 );
 
+CREATE TABLE `Tags` (
+	`id` 	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	`name`	TEXT NOT NULL
+)
+
+CREATE TABLE `Entry_Tag` (
+	`id` 	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	`entry_id`	TEXT NOT NULL,
+	`tag_id`	TEXT NOT NULL
+)
 
 INSERT INTO `Journal_Entry` VALUES (null, '01/10/2021', 'death', 'journal1', 1);
 INSERT INTO `Journal_Entry` VALUES (null, '01/12/2021', 'milk', 'journal2', 2);

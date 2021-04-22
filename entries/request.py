@@ -2,6 +2,7 @@ import sqlite3
 import json
 from models import Journal_Entry
 from models import Mood
+from models import Tags
 
 def get_all_entries():
     # Open a connection to the database
@@ -19,10 +20,15 @@ def get_all_entries():
             e.topic,
             e.journal_entry,
             e.mood_id,
-            m.mood
+            m.mood,
+            t.name
         FROM Journal_Entry e
         JOIN Mood m
             ON m.id = e.mood_id
+        JOIN Entry_Tag et
+            ON et.entry_id = e.id
+        JOIN Tags t
+            ON t.id = et.tag_id
         """)
 
         # Initialize an empty list to hold all journal_entry representations
@@ -43,6 +49,9 @@ def get_all_entries():
 
             mood = Mood(row['mood_id'], row['mood'])
             entry.mood = mood.__dict__
+
+            tags = Tags(row['name'])
+            entry.tags = tags.__dict__
 
             entries.append(entry.__dict__)
 
@@ -99,11 +108,20 @@ def create_entry(new_entry):
             ( ?, ?, ?, ?);
         """, (new_entry['date'], new_entry['topic'],
               new_entry['entry'], new_entry['mood_id'], ))
-
+        
         # The `lastrowid` property on the cursor will return
         # the primary key of the last thing that got added to
         # the database.
         id = db_cursor.lastrowid
+        
+        for tag in new_entry['tag']:
+            db_cursor.execute("""
+            INSERT INTO Entry_Tag
+                ( entry_id, tag_id )
+            VALUES
+                ( ?, ?);
+                """, (id, tag))
+
 
         # Add the `id` property to the entry dictionary that
         # was sent by the client so that the client sees the

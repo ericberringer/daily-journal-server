@@ -1,6 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from moods import get_single_mood, get_all_moods, delete_mood
-from entries import get_all_entries, get_single_entry, delete_entry, get_entry_by_search, create_entry
+from entries import get_all_entries, get_single_entry, delete_entry, get_entry_by_search, create_entry, update_entry
 import json
 
 # Here's a class. It inherits from another class.
@@ -123,6 +123,32 @@ class HandleRequests(BaseHTTPRequestHandler):
             new_entry = create_entry(post_body)
             # Encode the new entry and send in response
             self.wfile.write(f"{new_entry}".encode())
+
+    def do_PUT(self):
+        # You should be able to explain which HTTP method is used by the client to request that a resource's state should change.
+        self._set_headers(204)
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+        post_body = json.loads(post_body)
+
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
+
+        success = False
+
+        if resource == "entries":
+            success = update_entry(id, post_body)
+            # Encode the new entry and send in response
+            # self.wfile.write("".encode())
+
+        if success:
+            self._set_headers(204)
+        else:
+            self._set_headers(404)
+
+
+
+        self.wfile.write("".encode())
 
 
     def do_DELETE(self):

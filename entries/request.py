@@ -148,6 +148,34 @@ def get_entry_by_search(search):
 
         return json.dumps(entries)
 
+def update_entry(id, updated_entry):
+    # communicate with proper database
+    with sqlite3.connect("./dailyjournal.db") as conn:
+        # .cursor() allows us to execute SQLite statements
+        db_cursor = conn.cursor()
+        # executing a python query
+        # implementing multiple sql parameters to update the database via data sent by the client
+        # here we are changing the current state of the database (edit form)
+        db_cursor.execute("""
+        UPDATE Journal_Entry
+            SET 
+                date = ?,
+                topic = ?,
+                journal_entry = ?,
+                mood_id = ?
+        WHERE id = ?
+        """, (updated_entry['date'],
+            updated_entry['topic'],
+            updated_entry['entry'],
+            updated_entry['mood_id'], id, ))
+
+        rows_affected = db_cursor.rowcount
+    
+    if rows_affected == 0:  
+        return False
+    else:
+        return True
+
 def delete_entry(id):
     with sqlite3.connect("./dailyjournal.db") as conn:
         db_cursor = conn.cursor()
